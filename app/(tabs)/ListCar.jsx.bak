@@ -1,0 +1,71 @@
+import { StyleSheet, FlatList } from "react-native";
+import React, { useState, useEffect } from "react";
+import CarList from "@/components/CarList";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import Constants from "expo-constants";
+
+export default function ListCar() {
+  const [cars, setCars] = useState([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const response = await fetch(
+        "https://api-car-rental.binaracademy.org/customer/car"
+      );
+      const body = await response.json();
+      setCars(body);
+    };
+    getData();
+  }, []);
+
+  const renderItem = ({ item: car }) => (
+    <CarList
+      key={car.id}
+      image={{ uri: car.image }}
+      carName={car.name}
+      passenger={5}
+      baggage={2}
+      price={car.price}
+    />
+  );
+
+  return (
+    <ThemedView style={styles.container}>
+      <ThemedView style={styles.header}>
+        <ThemedText type="label">Daftar Mobil</ThemedText>
+      </ThemedView>
+      <ThemedView style={styles.listCar}>
+        {cars.length > 0 ? (
+          <FlatList
+            data={cars}
+            renderItem={renderItem}
+            keyExtractor={(car) => car.id}
+          />
+        ) : (
+          <ThemedText>No cars found</ThemedText>
+        )}
+      </ThemedView>
+    </ThemedView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: Constants.statusBarHeight,
+  },
+  header: {
+    shadowOffset: { width: 3, height: 5 },
+    shadowOpacity: 0.55,
+    shadowRadius: 3,
+    elevation: 8,
+    borderRadius: 2,
+    padding: 20,
+    marginBottom: 10,
+  },
+  listCar: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+});
