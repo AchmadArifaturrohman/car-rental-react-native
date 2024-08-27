@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   TouchableOpacity,
@@ -10,9 +10,58 @@ import { ThemedText as Text } from "@/components/ThemedText";
 import { ThemedView as View } from "@/components/ThemedView";
 import { ThemedTextInput as TextInput } from "@/components/ThemedTextInput";
 import { Colors } from "@/constants/Colors";
+import ModalPopup from "@/components/Modal";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { saveUser } from "@/components/GetUser";
 
 export default function Login() {
   const colorScheme = useColorScheme();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const handleChange = (name, text) => {
+    setFormData({
+      ...formData,
+      [name]: text,
+    });
+  };
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(
+        "https://api-car-rental.binaracademy.org/customer/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
+      const body = await response.json();
+      if (!response.ok) {
+        throw new Error(body.message || body[0].message || "Ada Kesalahan!");
+      }
+      saveUser(body);
+      setModalVisible(true);
+      setTimeout(() => {
+        setModalVisible(false);
+        router.navigate("../(tabs)");
+      }, 1000);
+    } catch (error) {
+      setErrorMessage(error.message);
+      setModalVisible(true);
+      setTimeout(() => {
+        setModalVisible(false);
+        setErrorMessage(null);
+      }, 1000);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -24,7 +73,10 @@ export default function Login() {
               : Colors.light.tmminLogoLight
           }
         />
-        <TouchableOpacity style={styles.closeButton}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => router.navigate("../(tabs)")}
+        >
           <Text style={styles.closeButtonText}>×</Text>
         </TouchableOpacity>
       </View>
@@ -38,6 +90,7 @@ export default function Login() {
         </Text>
         <TextInput
           style={styles.input}
+          onChangeText={(text) => handleChange("email", text)}
           placeholder="Contoh: achmad@gmail.com"
           keyboardType="email-address"
         />
@@ -49,6 +102,7 @@ export default function Login() {
         </Text>
         <TextInput
           style={styles.input}
+          onChangeText={(text) => handleChange("password", text)}
           placeholder="6+ karakter"
           secureTextEntry={true}
         />
@@ -56,7 +110,7 @@ export default function Login() {
 
       <TouchableOpacity
         style={styles.signInButton}
-        onPress={() => router.navigate("../(tabs)")}
+        onPress={() => handleSubmit()}
       >
         <Text style={styles.signInButtonText}>Sign In</Text>
       </TouchableOpacity>
@@ -69,6 +123,25 @@ export default function Login() {
           </Link>
         </TouchableOpacity>
       </View>
+      <ModalPopup visible={modalVisible}>
+        <View style={styles.modalBackground}>
+          <Ionicons
+            size={20}
+            name={
+              errorMessage == null || errorMessage == ""
+                ? "checkmark-circle"
+                : "close-circle"
+            }
+            color={colorScheme === "dark" ? "white" : "black"}
+            style={{ marginBottom: 10 }}
+          />
+          <Text>
+            {errorMessage == null || errorMessage == ""
+              ? "Login Berhasil!"
+              : errorMessage}
+          </Text>
+        </View>
+      </ModalPopup>
     </View>
   );
 }
@@ -140,5 +213,17 @@ const styles = StyleSheet.create({
     color: "blue",
     textDecorationLine: "underline",
     fontWeight: "700",
+  },
+  modalBackground: {
+    width: "90%",
+    elevation: 20,
+    padding: 25,
+    borderRadius: 4,
+    margin: 10,
+    alignItems: "center",
+    borderWidth: 0.2,
+    shadowRadius: 10,
+    shadowOpacity: 0.35,
+    shadowOffset: { width: 3, height: 5 },
   },
 });

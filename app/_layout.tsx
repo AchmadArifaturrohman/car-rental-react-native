@@ -6,11 +6,14 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import { router } from "expo-router";
+import { getUser } from "@/components/GetUser";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const user = getUser();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     PoppinsRegular: require('../assets/fonts/Poppins-Regular.ttf'),
@@ -27,7 +30,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      
+      if (user) {
+        router.navigate("/(tabs)");
+      }
+      setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 500);
     }
   }, [loaded]);
 
