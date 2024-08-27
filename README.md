@@ -51,6 +51,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Contact
 
-[Your Name] - [Your Email]
+Achmad Arifaturrohman - [achmadarifaturrohman@gmail.com]
 
-Project Link: [https://github.com/yourusername/car-rental-react-native](https://github.com/yourusername/car-rental-react-native)
+Project Link: [https://github.com/AchmadArifaturrohman/car-rental-react-native](https://github.com/AchmadArifaturrohman/car-rental-react-native)
