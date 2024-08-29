@@ -105,6 +105,9 @@ importers:
       reactotron-react-native:
         specifier: ^5.1.8
         version: 5.1.8(react-native@0.74.5(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)
+      reactotron-redux:
+        specifier: ^3.1.10
+        version: 3.1.10(reactotron-core-client@2.9.4)(redux@5.0.1)
       typescript:
         specifier: ~5.3.3
         version: 5.3.3
@@ -3961,6 +3964,12 @@ packages:
     resolution: {integrity: sha512-f3UYe/SHafHv1jDz/+rvIdfC3dk2xhVKrXqIFc3r3o+Vs0FtV5WsUBrUUhbx0oFho2hyHT5LFzUA78o4q4TGpg==}
     peerDependencies:
       react-native: '>=0.40.0'
+
+  reactotron-redux@3.1.10:
+    resolution: {integrity: sha512-35uD3SlUxkgQm6g/S8+bYho6N47KzH2lAsjXnWirKUXS23Hb6ovOsWnrNb8JipLzfMgb2CCpL7oHB5FCwr4RoQ==}
+    peerDependencies:
+      reactotron-core-client: '*'
+      redux: '>=4.0.0'
 
   readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
@@ -10071,6 +10080,11 @@ snapshots:
       react-native-flipper: 0.164.0(react-native@0.74.5(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)
     transitivePeerDependencies:
       - react
+
+  reactotron-redux@3.1.10(reactotron-core-client@2.9.4)(redux@5.0.1):
+    dependencies:
+      reactotron-core-client: 2.9.4
+      redux: 5.0.1
 
   readable-stream@2.3.8:
     dependencies:

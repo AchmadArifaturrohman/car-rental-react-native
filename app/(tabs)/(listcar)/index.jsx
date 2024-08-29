@@ -5,33 +5,22 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Constants from "expo-constants";
 import { router } from "expo-router";
+import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch from react-redux // useSelector untuk mengakses state dari store, useDispatch untuk mengirim action ke store
+import { getCar, selectCar } from "@/redux/reducers/car/carSlice"; // Import getCar and selectCar from carSlice // getCar untuk mengambil data dari API, selectCar untuk mengakses state dari store
 
 export default function ListCar() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const { data, isLoading, isError, errorMessage } = useSelector(selectCar);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const controller = new AbortController(); // UseEffect cleanup untuk menghindari memory Leak
     const signal = controller.signal; // UseEffect cleanup
-
     setLoading(true); //loading state
-    const getData = async () => {
-      try {
-        const response = await fetch(
-          "https://api-car-rental.binaracademy.org/customer/car",
-          { signal: signal } // UseEffect cleanup
-        );
-        const body = await response.json();
-        setCars(body);
-      } catch (e) {
-        // Error Handling
-        if (err.name === "AbortError") {
-          console.log("successfully aborted");
-        } else {
-          console.log(err);
-        }
-      }
-    };
-    getData();
+    console.log(signal, "signal listcar");
+    dispatch(getCar(signal));
     return () => {
       // cancel request sebelum component di close
       controller.abort();
@@ -45,7 +34,7 @@ export default function ListCar() {
       </ThemedView>
       <ThemedView style={styles.listCar}>
         <FlatList
-          data={cars}
+          data={data}
           keyExtractor={(item) => item.id.toString()}
           ListEmptyComponent={
             loading ? (

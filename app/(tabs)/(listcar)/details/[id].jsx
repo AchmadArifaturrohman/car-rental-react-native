@@ -8,6 +8,11 @@ import { useState, useEffect } from "react";
 import { Row, Column } from "@/components/Grid";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch from react-redux // useSelector untuk mengakses state dari store, useDispatch untuk mengirim action ke store
+import {
+  getCarDetails,
+  selectCarDetails,
+} from "@/redux/reducers/car/carDetailsSlice"; // Import getCarDetails and selectCarDetails from carDetailsSlice // getCarDetails untuk mengambil data dari API, selectCarDetails untuk mengakses state dari store
 
 const formatCurrency = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -16,40 +21,27 @@ const formatCurrency = new Intl.NumberFormat("id-ID", {
 
 export default function details() {
   const { id } = useLocalSearchParams();
-  const [cars, setCars] = useState({});
-  const [loading, setLoading] = useState(false);
+  const { data, isLoading, isError, errorMessage } =
+    useSelector(selectCarDetails);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const controller = new AbortController(); // UseEffect cleanup untuk menghindari memory Leak
     const signal = controller.signal; // UseEffect cleanup
+    console.log(id, "id details");
+    dispatch(getCarDetails({ id, signal }));
 
-    setLoading(true); //loading state
-    const getData = async () => {
-      try {
-        const response = await fetch(
-          "https://api-car-rental.binaracademy.org/customer/car/" + id,
-          { signal: signal } // UseEffect cleanup
-        );
-        const body = await response.json();
-        setCars(body);
-      } catch (e) {
-        // Error Handling
-        if (err.name === "AbortError") {
-          console.log("successfully aborted");
-        } else {
-          console.log(err);
-        }
-      }
-    };
-    getData();
     return () => {
       // cancel request sebelum component di close
       controller.abort();
     };
   }, []);
+
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={{ width: "100%", paddingHorizontal: 20 }}>
-        <ThemedText style={{ textAlign: "center" }}>{cars.name}</ThemedText>
+        <ThemedText style={{ textAlign: "center" }}>{data.name}</ThemedText>
         <View style={{ alignItems: "center" }}>
           <Row alignItems="center" gap={10}>
             <Column style={styles.textIcon}>
@@ -62,9 +54,9 @@ export default function details() {
             </Column>
           </Row>
         </View>
-        {cars.image && (
+        {data.image && (
           <Image
-            source={{ uri: cars.image }}
+            source={{ uri: data.image }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -126,7 +118,7 @@ export default function details() {
       </ScrollView>
       <ThemedView style={styles.footer} isCard>
         <ThemedText label="title" style={styles.price}>
-          {formatCurrency.format(cars.price)}
+          {formatCurrency.format(data.price)}
         </ThemedText>
         <Button title="Lanjutkan Pembayaran" color="#3D7B3F" />
       </ThemedView>

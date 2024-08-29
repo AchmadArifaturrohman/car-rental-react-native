@@ -138,7 +138,7 @@ export default function Register() {
         <View style={styles.modalBackground}>
           <Ionicons
             size={20}
-            name={errorMessage == null ? "close-circle" : "checkmark-circle"}
+            name={errorMessage == null ? "checkmark-circle" : "close-circle"}
             color={colorScheme === "dark" ? "white" : "black"}
             style={{ marginBottom: 10 }}
           />
