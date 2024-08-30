@@ -19,7 +19,6 @@ export default function ListCar() {
     const controller = new AbortController(); // UseEffect cleanup untuk menghindari memory Leak
     const signal = controller.signal; // UseEffect cleanup
     setLoading(true); //loading state
-    console.log(signal, "signal listcar");
     dispatch(getCar(signal));
     return () => {
       // cancel request sebelum component di close

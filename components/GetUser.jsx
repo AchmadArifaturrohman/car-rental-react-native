@@ -1,7 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 
 export function getUser() {
-  return SecureStore.getItem("user");
+  const user = SecureStore.getItem("user");
+  return user;
 }
 
 export function deleteUser() {

@@ -1,11 +1,25 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const fetchCars = createAsyncThunk("car/fetchCars", async (signal) => {
-    const response = await fetch("https://api-car-rental.binaracademy.org/customer/car/", { signal: signal });
-    return response?.json();
-});
+export const authLogin = createAsyncThunk("auth/authLogin", async (formData, {rejectWithValue}) => {
 
-export const fetchCarsDetails = createAsyncThunk("car/fetchCarsDetails", async ({id, signal}) => {
-    const response = await fetch(`https://api-car-rental.binaracademy.org/customer/car/${id}`, { signal: signal });
-    return response?.json();
+     try {
+        const response = await fetch(
+        "https://api-car-rental.binaracademy.org/customer/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
+      const body = await response?.json();
+      if(!response.ok) throw new Error(body.message);
+      return body;
+    } catch (error) {
+        return rejectWithValue(error.message);
+    }
 });

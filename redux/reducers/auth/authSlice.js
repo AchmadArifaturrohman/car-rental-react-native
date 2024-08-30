@@ -1,37 +1,58 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchCars } from "./carApi";
+import { authLogin } from "./authApi";
+import { getUser, saveUser } from "@/components/GetUser"
 
-// Create a slice for managing car-related state
-const carSlice = createSlice({
-    name: "car",
+
+const authSlice = createSlice({
+    name: "auth",
     initialState: {
         isLoading: false,
-        data: [],
+        user: getUser() ? getUser() : null,
         isError: false,
+        isLoginSuccess: false,
         errorMessage: null,
+        isModalVisible: false,
+    },
+    reducers: {
+        closeModal: (state) => {
+            state.isModalVisible = false;
+            state.isError = false;
+            state.errorMessage = null;
+        },
     },
     extraReducers: (builder) => {
-        // Handle pending state when fetching cars
-        builder.addCase(fetchCars.pending, (state, action) => {
+        builder.addCase(authLogin.pending, (state, action) => {
             state.isLoading = true;
+            state.isError = false;
+            state.errorMessage = null;
+            state.isLoginSuccess = false;
+            
         });
-        // Handle successful fetch of cars
-        builder.addCase(fetchCars.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.data = action.payload;
+        builder.addCase(authLogin.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isLoginSuccess = true;
+                state.user = {
+                    email: action.payload.email,
+                    role: action.payload.role,
+                    token: action.payload.access_token
+                };
+                state.isError = false;
+                state.errorMessage = null;
+                state.isModalVisible = true;
+                saveUser(action.payload);
         });
-        // Handle error state when fetching cars fails
-        builder.addCase(fetchCars.rejected, (state, action) => {
+        builder.addCase(authLogin.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.errorMessage = action.error.message;
+            state.isLoginSuccess = false;
+            state.errorMessage = action.payload || "An error occurred";
+            state.isModalVisible = true;
         });
     },
 });
 
-// Export the action for fetching cars
-export const getCar = fetchCars;
-// Selector functions to access the car state from the Redux store
-export const selectCar = state => state.car;
-// Export the reducers
-export const newCar = carSlice.reducer;
+
+export const postAuthLogin = authLogin;
+export const { closeModal } = authSlice.actions; //export action closeModal
+export const selectAuthLogin = state => state.login;
+export const newAuthLogin = authSlice.reducer;

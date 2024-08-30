@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Image,
   TouchableOpacity,
@@ -13,11 +13,26 @@ import { Colors } from "@/constants/Colors";
 import ModalPopup from "@/components/Modal";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { saveUser } from "@/components/GetUser";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  postAuthLogin,
+  selectAuthLogin,
+  closeModal,
+} from "@/redux/reducers/auth/authSlice";
 
 export default function Login() {
   const colorScheme = useColorScheme();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+
+  const {
+    user,
+    isLoading,
+    isError,
+    errorMessage,
+    isLoginSuccess,
+    isModalVisible,
+  } = useSelector(selectAuthLogin);
+
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -29,39 +44,20 @@ export default function Login() {
     });
   };
   const handleSubmit = async () => {
-    try {
-      const response = await fetch(
-        "https://api-car-rental.binaracademy.org/customer/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
+    dispatch(postAuthLogin(formData));
+  };
+
+  useEffect(() => {
+    if (isModalVisible) {
+      setTimeout(() => {
+        dispatch(closeModal());
+        if (!isError) {
+          saveUser(user);
+          router.replace("../(tabs)");
         }
-      );
-      const body = await response.json();
-      if (!response.ok) {
-        throw new Error(body.message || body[0].message || "Ada Kesalahan!");
-      }
-      saveUser(body);
-      setModalVisible(true);
-      setTimeout(() => {
-        setModalVisible(false);
-        router.navigate("../(tabs)");
-      }, 1000);
-    } catch (error) {
-      setErrorMessage(error.message);
-      setModalVisible(true);
-      setTimeout(() => {
-        setModalVisible(false);
-        setErrorMessage(null);
       }, 1000);
     }
-  };
+  }, [isModalVisible]);
 
   return (
     <View style={styles.container}>
@@ -123,23 +119,15 @@ export default function Login() {
           </Link>
         </TouchableOpacity>
       </View>
-      <ModalPopup visible={modalVisible}>
+      <ModalPopup visible={isModalVisible}>
         <View style={styles.modalBackground}>
           <Ionicons
             size={20}
-            name={
-              errorMessage == null || errorMessage == ""
-                ? "checkmark-circle"
-                : "close-circle"
-            }
+            name={!isError ? "checkmark-circle" : "close-circle"}
             color={colorScheme === "dark" ? "white" : "black"}
             style={{ marginBottom: 10 }}
           />
-          <Text>
-            {errorMessage == null || errorMessage == ""
-              ? "Login Berhasil!"
-              : errorMessage}
-          </Text>
+          <Text>{!isError ? "Login Berhasil!" : errorMessage}</Text>
         </View>
       </ModalPopup>
     </View>

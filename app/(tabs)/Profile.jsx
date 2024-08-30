@@ -8,7 +8,6 @@ import { getUser, deleteUser } from "@/components/GetUser";
 
 export default function Profile() {
   const [userData, setUserData] = useState(null);
-
   useEffect(() => {
     async function fetchUserData() {
       const user = await getUser();
