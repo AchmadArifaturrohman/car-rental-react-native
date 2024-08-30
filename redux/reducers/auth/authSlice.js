@@ -1,15 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { authLogin } from "./authApi";
-import { getUser, saveUser } from "@/components/GetUser"
+import { getUser, saveUser, deleteUser } from "@/components/GetUser"
 
 
 const authSlice = createSlice({
     name: "auth",
     initialState: {
         isLoading: false,
-        user: getUser() ? getUser() : null,
+        user: getUser() ? getUser() : {},
         isError: false,
-        isLoginSuccess: false,
+        isLoginSuccess: getUser() ? true : false,
         errorMessage: null,
         isModalVisible: false,
     },
@@ -19,6 +19,11 @@ const authSlice = createSlice({
             state.isError = false;
             state.errorMessage = null;
         },
+        logOut: (state) => {
+            state.user = {};
+            state.isLoginSuccess = false;
+            deleteUser();
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(authLogin.pending, (state, action) => {
@@ -53,6 +58,6 @@ const authSlice = createSlice({
 
 
 export const postAuthLogin = authLogin;
-export const { closeModal } = authSlice.actions; //export action closeModal
+export const { closeModal, logOut } = authSlice.actions; //export action closeModal
 export const selectAuthLogin = state => state.login;
 export const newAuthLogin = authSlice.reducer;

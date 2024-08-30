@@ -5,22 +5,19 @@ import Constants from "expo-constants";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { getUser, deleteUser } from "@/components/GetUser";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  newAuthLogin,
+  logOut,
+  selectAuthLogin,
+} from "@/redux/reducers/auth/authSlice";
 
 export default function Profile() {
-  const [userData, setUserData] = useState(null);
-  useEffect(() => {
-    async function fetchUserData() {
-      const user = await getUser();
-      if (user) {
-        setUserData(JSON.parse(user));
-      }
-    }
-    fetchUserData();
-  }, []);
+  const dispatch = useDispatch();
+  const { user, isLoginSuccess, isError } = useSelector(selectAuthLogin);
 
-  const handleLogout = async () => {
-    await deleteUser();
-    setUserData(null);
+  const handleLogout = () => {
+    dispatch(logOut());
     router.navigate("../(auth)");
   };
 
@@ -33,7 +30,7 @@ export default function Profile() {
       <ThemedView style={styles.header}>
         <ThemedText type="label">Akun</ThemedText>
       </ThemedView>
-      {userData ? (
+      {isLoginSuccess ? (
         <ThemedView style={styles.profile}>
           <ThemedView style={styles.profileImage}>
             <Image
@@ -41,7 +38,7 @@ export default function Profile() {
               style={styles.imageProfile}
             />
           </ThemedView>
-          <ThemedText type="label">{userData.email}</ThemedText>
+          <ThemedText type="label">{user.email}</ThemedText>
           <TouchableOpacity style={styles.logOutButton} onPress={handleLogout}>
             <Text style={styles.logOutButtonText}>Log Out</Text>
           </TouchableOpacity>
