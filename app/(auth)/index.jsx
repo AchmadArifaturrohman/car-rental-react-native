@@ -52,7 +52,7 @@ export default function Login() {
       setTimeout(() => {
         dispatch(closeModal());
         if (!isError) {
-          saveUser(user);
+          //saveUser(user);
           router.replace("../(tabs)");
         }
       }, 1000);
