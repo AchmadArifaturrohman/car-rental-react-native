@@ -2,7 +2,7 @@ import * as SecureStore from "expo-secure-store";
 
 export function getUser() {
   const user = SecureStore.getItem("user");
-  return JSON.parse(user);
+  return user ? JSON.parse(user) : user;
 }
 
 export function deleteUser() {

@@ -58,11 +58,9 @@ export default function RootLayout() {
       <Provider store={store}>
         {/* Stack: Defines the navigation structure */}
         <Stack>
-          {/* Auth screens */}
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          {/* Main app tabs */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          {/* Not found screen */}
+          <Stack.Screen name="(order)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
       </Provider>

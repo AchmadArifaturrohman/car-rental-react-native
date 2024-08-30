@@ -6,13 +6,10 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { getUser, deleteUser } from "@/components/GetUser";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  newAuthLogin,
-  logOut,
-  selectAuthLogin,
-} from "@/redux/reducers/auth/authSlice";
+import { logOut, selectAuthLogin } from "@/redux/reducers/auth/authSlice";
 
 export default function Profile() {
+  const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
   const { user, isLoginSuccess, isError } = useSelector(selectAuthLogin);
 

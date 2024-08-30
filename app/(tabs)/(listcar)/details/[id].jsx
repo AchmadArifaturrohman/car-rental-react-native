@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import React from "react";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 import Constants from "expo-constants";
 import { ScrollView, StyleSheet, Image, Button, View } from "react-native";
 import { useState, useEffect } from "react";
@@ -120,7 +120,11 @@ export default function details() {
         <ThemedText label="title" style={styles.price}>
           {formatCurrency.format(data.price)}
         </ThemedText>
-        <Button title="Lanjutkan Pembayaran" color="#3D7B3F" />
+        <Button
+          title="Lanjutkan Pembayaran"
+          color="#3D7B3F"
+          onPress={() => router.navigate("/(order)")}
+        />
       </ThemedView>
     </ThemedView>
   );
