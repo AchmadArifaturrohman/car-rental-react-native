@@ -10,6 +10,7 @@ import ParallaxFlatList from "../../components/ParallaxFlatList";
 import { router } from "expo-router";
 import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch from react-redux // useSelector untuk mengakses state dari store, useDispatch untuk mengirim action ke store
 import { getCar, selectCar } from "@/redux/reducers/car/carSlice"; // Import getCar and selectCar from carSlice // getCar untuk mengambil data dari API, selectCar untuk mengakses state dari store
+import GeoLocation from "@/components/GeoLocation";
 
 export default function HomeScreen() {
   const [cars, setCars] = useState([]);
@@ -38,7 +39,7 @@ export default function HomeScreen() {
         <View style={styles.container}>
           <View>
             <Text style={styles.titleText}>Hi, Nama</Text>
-            <Text style={styles.titleText}>Location</Text>
+            <GeoLocation style={styles.titleText} />
           </View>
           <View>
             <Image

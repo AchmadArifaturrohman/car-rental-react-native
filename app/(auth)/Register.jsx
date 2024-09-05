@@ -14,22 +14,35 @@ import { Colors } from "@/constants/Colors";
 import ModalPopup from "@/components/Modal";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import * as Yup from "yup";
+import { Formik } from "formik";
+
+const SignupSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required Bro"),
+  password: Yup.string()
+    .max(20, "Too Long!")
+    .min(8, "Must Contain 8 Characters")
+    .required()
+    .matches(/^(?=.*[a-z])/, "Must Contain One Lowercase Character")
+    .matches(/^(?=.*[A-Z])/, "Must Contain One Uppercase Character")
+    .matches(/^(?=.*[0-9])/, "Must Contain One Number Character")
+    .matches(
+      /^(?=.*[!@#\$%\^&\*])/,
+      "  Must Contain  One Special Case Character"
+    )
+    .required("Required"),
+  email: Yup.string().email("Invalid email").required("Required"),
+});
 
 export default function Register() {
   const colorScheme = useColorScheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const handleChange = (name, text) => {
-    setFormData({
-      ...formData,
-      [name]: text,
-    });
-  };
-  const handleSubmit = async () => {
+
+  const handleSubmit = async (values) => {
     try {
       const reg = await fetch(
         "https://api-car-rental.binaracademy.org/customer/auth/register",
@@ -39,8 +52,8 @@ export default function Register() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
+            email: values.email,
+            password: values.password,
             role: "Customer",
           }),
         }
@@ -85,46 +98,72 @@ export default function Register() {
       <Text style={styles.title} type="title">
         Sign Up
       </Text>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} type="label">
-          Name *
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
-          keyboardType="default"
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} type="label">
-          Email *
-        </Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => handleChange("email", text)}
-          placeholder="Contoh: achmad@gmail.com"
-          keyboardType="email-address"
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} type="label">
-          Create Password
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="6+ karakter"
-          secureTextEntry={true}
-          onChangeText={(text) => handleChange("password", text)}
-        />
-      </View>
-
-      <TouchableOpacity
-        style={styles.signUpButton}
-        onPress={() => handleSubmit(true)}
+      <Formik
+        initialValues={{ email: "", name: "", password: "" }}
+        onSubmit={(values) => handleSubmit(values)}
+        validationSchema={SignupSchema}
       >
-        <Text style={styles.signUpButtonText}>Sign Up</Text>
-      </TouchableOpacity>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
+          <>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label} type="label">
+                Name *
+              </Text>
+              <TextInput
+                onBlur={handleBlur("name")}
+                onChangeText={handleChange("name")}
+                style={styles.input}
+                placeholder="Full Name"
+                keyboardType="default"
+              />
+              {errors.name && touched.name ? <Text>{errors.name}</Text> : null}
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label} type="label">
+                Email *
+              </Text>
+              <TextInput
+                onBlur={handleBlur("email")}
+                style={styles.input}
+                onChangeText={handleChange("email")}
+                placeholder="Contoh: achmad@gmail.com"
+                keyboardType="email-address"
+              />
+              {errors.email && touched.email ? (
+                <Text>{errors.email}</Text>
+              ) : null}
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label} type="label">
+                Create Password
+              </Text>
+              <TextInput
+                style={styles.input}
+                onBlur={handleBlur("password")}
+                placeholder="min 8 karakter"
+                secureTextEntry={true}
+                onChangeText={handleChange("password")}
+              />
+              {errors.password && touched.password ? (
+                <Text>{errors.password}</Text>
+              ) : null}
+            </View>
+            <TouchableOpacity
+              style={styles.signUpButton}
+              onPress={handleSubmit}
+            >
+              <Text style={styles.signUpButtonText}>Sign Up</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
 
       <View style={styles.signUpContainer}>
         <Text style={styles.signUpText}>Already have an account? </Text>

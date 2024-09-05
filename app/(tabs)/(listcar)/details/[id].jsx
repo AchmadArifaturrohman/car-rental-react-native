@@ -13,11 +13,7 @@ import {
   getCarDetails,
   selectCarDetails,
 } from "@/redux/reducers/car/carDetailsSlice"; // Import getCarDetails and selectCarDetails from carDetailsSlice // getCarDetails untuk mengambil data dari API, selectCarDetails untuk mengakses state dari store
-
-const formatCurrency = new Intl.NumberFormat("id-ID", {
-  style: "currency",
-  currency: "IDR",
-});
+import FormatCurrency from "@/components/FormatCurrency";
 
 export default function details() {
   const { id } = useLocalSearchParams();
@@ -25,11 +21,9 @@ export default function details() {
     useSelector(selectCarDetails);
 
   const dispatch = useDispatch();
-
   useEffect(() => {
     const controller = new AbortController(); // UseEffect cleanup untuk menghindari memory Leak
     const signal = controller.signal; // UseEffect cleanup
-    console.log(id, "id details");
     dispatch(getCarDetails({ id, signal }));
 
     return () => {
@@ -118,7 +112,7 @@ export default function details() {
       </ScrollView>
       <ThemedView style={styles.footer} isCard>
         <ThemedText label="title" style={styles.price}>
-          {formatCurrency.format(data.price)}
+          <FormatCurrency amount={data.price} />
         </ThemedText>
         <Button
           title="Lanjutkan Pembayaran"

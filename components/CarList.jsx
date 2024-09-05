@@ -4,11 +4,7 @@ import { Row, Column } from "./Grid";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
-
-const formatCurrency = new Intl.NumberFormat("id-ID", {
-  style: "currency",
-  currency: "IDR",
-});
+import FormatCurrency from "./FormatCurrency";
 
 export default function CarList({
   image,
@@ -39,7 +35,7 @@ export default function CarList({
               </Column>
             </Row>
             <ThemedText style={styles.price}>
-              {formatCurrency.format(price)}
+              <FormatCurrency amount={price} />
             </ThemedText>
           </Column>
         </Row>
