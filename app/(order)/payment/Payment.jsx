@@ -17,6 +17,8 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import CountDown from "react-native-countdown-component-maintained";
 import * as Clipboard from "expo-clipboard";
 
+import Confirmation from "./Confirmation";
+
 import { useSelector, useDispatch } from "react-redux";
 import { selectOrder, setStateByName } from "@/redux/reducers/order/orderSlice";
 
@@ -35,21 +37,27 @@ function getDate24() {
   });
 }
 
-export default function Payment({ data, loading, setActiveStep }) {
+export default function Payment({
+  data,
+  loading,
+  setActiveStep,
+  setConfirmationModalVisible,
+}) {
   const colorScheme = useColorScheme();
   const [newLoading, setNewLoading] = useState(true);
   const [newData, setNewData] = useState(null);
   // const [selectedBank, setSelectedBank] = useState(null);
   const bankOptions = [{ name: "BCA", transferName: "BCA Transfer" }];
-  const { selectedBank, promo } = useSelector(selectOrder);
+  const { selectedBank, promo, dataOrder } = useSelector(selectOrder);
   const dispatch = useDispatch();
-
+  const [image, setImage] = useState(null);
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
   };
 
   useEffect(() => {
     setNewData(data);
+    console.log("dataOrder", dataOrder);
   }, []);
   return (
     <ThemedView style={styles.container}>

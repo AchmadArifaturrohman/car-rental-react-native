@@ -19,6 +19,13 @@ import {
   selectAuthLogin,
   closeModal,
 } from "@/redux/reducers/auth/authSlice";
+import * as Yup from "yup";
+import { Formik } from "formik";
+
+const SignupSchema = Yup.object().shape({
+  password: Yup.string().required("Required"),
+  email: Yup.string().email("Invalid email").required("Required"),
+});
 
 export default function Login() {
   const colorScheme = useColorScheme();
@@ -33,18 +40,10 @@ export default function Login() {
   } = useSelector(selectAuthLogin);
 
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const handleChange = (name, text) => {
-    setFormData({
-      ...formData,
-      [name]: text,
-    });
-  };
-  const handleSubmit = async () => {
-    dispatch(postAuthLogin(formData));
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleSubmit = async (values) => {
+    dispatch(postAuthLogin(values));
   };
 
   useEffect(() => {
@@ -79,38 +78,73 @@ export default function Login() {
       <Text style={styles.title} type="title">
         Welcome Back!
       </Text>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} type="label">
-          Email
-        </Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => handleChange("email", text)}
-          placeholder="Contoh: achmad@gmail.com"
-          keyboardType="email-address"
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} type="label">
-          Password
-        </Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => handleChange("password", text)}
-          placeholder="6+ karakter"
-          secureTextEntry={true}
-        />
-      </View>
-
-      <TouchableOpacity
-        style={styles.signInButton}
-        onPress={() => handleSubmit()}
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        onSubmit={(values) => handleSubmit(values)}
+        validationSchema={SignupSchema}
       >
-        <Text style={styles.signInButtonText}>Sign In</Text>
-      </TouchableOpacity>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
+          <>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label} type="label">
+                Email
+              </Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                placeholder="Contoh: achmad@gmail.com"
+                keyboardType="email-address"
+              />
+              {errors.email && touched.email ? (
+                <Text>{errors.email}</Text>
+              ) : null}
+            </View>
 
+            <View style={styles.inputContainer}>
+              <Text style={styles.label} type="label">
+                Password
+              </Text>
+              <View style={styles.passwordInputContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  onChangeText={handleChange("password")}
+                  placeholder="min 8 karakter"
+                  secureTextEntry={!showPassword}
+                  onBlur={handleBlur("password")}
+                />
+                <TouchableOpacity
+                  style={styles.passwordToggle}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye" : "eye-off"}
+                    size={24}
+                    color={colorScheme === "dark" ? "white" : "black"}
+                  />
+                </TouchableOpacity>
+              </View>
+              {errors.password && touched.password ? (
+                <Text>{errors.password}</Text>
+              ) : null}
+            </View>
+
+            <TouchableOpacity
+              style={styles.signInButton}
+              onPress={handleSubmit}
+            >
+              <Text style={styles.signInButtonText}>Sign In</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
       <View style={styles.signUpContainer}>
         <Text style={styles.signUpText}>Don't have an account? </Text>
         <TouchableOpacity>
@@ -213,5 +247,21 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOpacity: 0.35,
     shadowOffset: { width: 3, height: 5 },
+  },
+  passwordInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+    borderWidth: 0,
+  },
+  passwordToggle: {
+    padding: 10,
   },
 });

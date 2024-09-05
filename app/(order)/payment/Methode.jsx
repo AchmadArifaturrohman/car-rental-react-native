@@ -17,7 +17,7 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { useSelector, useDispatch } from "react-redux";
 import { selectOrder, setStateByName } from "@/redux/reducers/order/orderSlice";
 
-export default function Methode({ data, loading, setActiveStep }) {
+export default function Methode({ data }) {
   // const [selectedBank, setSelectedBank] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
   const { selectedBank, promo } = useSelector(selectOrder);
@@ -67,6 +67,7 @@ export default function Methode({ data, loading, setActiveStep }) {
     //setNewData(data);
     console.log("selectedBank", selectedBank);
     console.log("promo", promo);
+    console.log("data", data);
   }, [selectedBank, promo]);
 
   return (

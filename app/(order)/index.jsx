@@ -3,19 +3,29 @@ import React, { useState, useEffect } from "react";
 import { ProgressSteps, ProgressStep } from "react-native-progress-stepper";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-
-import { useLocalSearchParams } from "expo-router";
 import Methode from "@/app/(order)/payment/Methode";
 import Payment from "@/app/(order)/payment/Payment";
+import Confirmation from "@/app/(order)/payment/Confirmation";
 import Ticket from "@/app/(order)/payment/Ticket";
 import FormatCurrency from "@/components/FormatCurrency";
+import { useColorScheme } from "react-native";
 
 import {
   selectCarDetails,
   getCarDetails,
 } from "@/redux/reducers/car/carDetailsSlice";
-import { selectOrder, setStateByName } from "@/redux/reducers/order/orderSlice";
+import {
+  postOrders,
+  postOrderSlips,
+  selectOrder,
+  setCarId,
+  resetState,
+  setStateByName,
+} from "@/redux/reducers/order/orderSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { router } from "expo-router";
+
+import { selectAuthLogin } from "@/redux/reducers/auth/authSlice";
 
 const FooterMethode = ({ price, selectedBank, onPress }) => (
   <ThemedView style={stylesMethode.footer} isCard>
@@ -32,7 +42,7 @@ const FooterMethode = ({ price, selectedBank, onPress }) => (
   </ThemedView>
 );
 
-const FooterPayment = ({ onPress }) => (
+const FooterPayment = ({ onPress, colorScheme }) => (
   <ThemedView style={stylesPayment.footer} isCard>
     <ThemedText style={stylesPayment.textKonfirmasi} type="label">
       Klik konfirmasi pembayaran untuk mempercepat proses pengecekan
@@ -46,7 +56,13 @@ const FooterPayment = ({ onPress }) => (
     </ThemedView>
     <ThemedView style={styles.buttonDaftarPesanan}>
       <TouchableOpacity
-        style={[stylesPayment.button, stylesPayment.whiteButton]}
+        style={[
+          stylesPayment.button,
+          stylesPayment.whiteButton,
+          colorScheme === "dark"
+            ? { backgroundColor: "#000" }
+            : { backgroundColor: "#fff" },
+        ]}
       >
         <ThemedText
           style={[stylesPayment.buttonText, stylesPayment.whiteButtonText]}
@@ -58,19 +74,55 @@ const FooterPayment = ({ onPress }) => (
   </ThemedView>
 );
 
+const FooterTicket = ({ onPress, colorScheme }) => (
+  <ThemedView style={stylesTicket.footer} isCard>
+    <ThemedView style={styles.buttonDaftarPesanan}>
+      <TouchableOpacity
+        style={[
+          stylesTicket.button,
+          stylesTicket.whiteButton,
+          colorScheme === "dark"
+            ? { backgroundColor: "#000" }
+            : { backgroundColor: "#fff" },
+        ]}
+      >
+        <ThemedText
+          style={[stylesTicket.buttonText, stylesTicket.whiteButtonText]}
+        >
+          Daftar Pesanan
+        </ThemedText>
+      </TouchableOpacity>
+    </ThemedView>
+  </ThemedView>
+);
 export default function Order() {
+  const colorScheme = useColorScheme();
   const { data } = useSelector(selectCarDetails);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  // const [currenStep, setActiveStep] = useState(0);
-  const { currentStep, selectedBank } = useSelector(selectOrder);
+  const { currentStep, selectedBank, dataOrder } = useSelector(selectOrder);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    // console.log(currentStep);
-    // console.log("activeStep", activeStep);
-    // console.log("selectedBank", selectedBank);
-  }, []);
+  const token = useSelector(selectAuthLogin).user.access_token;
+
+  const formData = {
+    carId: data.id,
+    startRentAt: data.start_rent_at,
+    finishRentAt: data.finish_rent_at,
+  };
+
+  const handleBayar = async () => {
+    console.log("handleBayar");
+    dispatch(setStateByName({ name: "currentStep", value: 1 }));
+    dispatch(setCarId(data.id));
+    dispatch(postOrders({ token, formData }));
+  };
+
+  const handleKonfirmasiBayar = async () => {
+    () => dispatch(setStateByName({ name: "currentStep", value: 2 }));
+    //() => setConfirmationModalVisible(true)
+  };
 
   const progressStepStyle = {
     activeStepNumColor: "black",
@@ -78,6 +130,10 @@ export default function Order() {
     disabledStepNumColor: "white",
     completedStepNumColor: "green",
   };
+
+  useEffect(() => {
+    setLoading(true);
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
@@ -89,12 +145,16 @@ export default function Order() {
         </ProgressStep>
         <ProgressStep label="Bayar" removeBtnRow={true}>
           <ThemedView style={styles.bayar}>
-            <Payment data={data} loading={loading} />
+            <Payment
+              data={data}
+              loading={loading}
+              setConfirmationModalVisible={confirmationModalVisible}
+            />
           </ThemedView>
         </ProgressStep>
-        <ProgressStep label="Tiket">
+        <ProgressStep label="Tiket" removeBtnRow={true}>
           <ThemedView style={styles.tiket}>
-            <ThemedText type="label">Tiket</ThemedText>
+            <Ticket />
           </ThemedView>
         </ProgressStep>
       </ProgressSteps>
@@ -102,21 +162,29 @@ export default function Order() {
         <FooterMethode
           price={data?.price || 0}
           selectedBank={selectedBank}
-          onPress={() =>
-            dispatch(setStateByName({ name: "currentStep", value: 1 }))
-          }
+          onPress={() => {
+            handleBayar();
+          }}
         />
       ) : currentStep === 1 ? (
         <FooterPayment
-          onPress={() =>
-            dispatch(setStateByName({ name: "currentStep", value: 2 }))
-          }
+          onPress={() => handleKonfirmasiBayar()}
+          colorScheme={colorScheme}
         />
       ) : (
-        <ThemedView>
-          <ThemedText>Tiket</ThemedText>
-        </ThemedView>
+        currentStep === 2 && (
+          <FooterTicket
+            onPress={() =>
+              dispatch(setStateByName({ name: "currentStep", value: 3 }))
+            }
+            colorScheme={colorScheme}
+          />
+        )
       )}
+      <Confirmation
+        visible={confirmationModalVisible}
+        onClose={() => setConfirmationModalVisible(false)}
+      />
     </ThemedView>
   );
 }
@@ -124,21 +192,10 @@ export default function Order() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
-    // justifyContent: "center",
   },
-  pilihMetode: {
-    // alignItems: "center",
-    // justifyContent: "center",
-  },
-  bayar: {
-    // alignItems: "center",
-    // justifyContent: "center",
-  },
-  tiket: {
-    //   alignItems: "center",
-    //   justifyContent: "center",
-  },
+  pilihMetode: {},
+  bayar: {},
+  tiket: {},
 });
 
 const stylesMethode = StyleSheet.create({
@@ -184,7 +241,43 @@ const stylesPayment = StyleSheet.create({
     fontWeight: "bold",
   },
   whiteButton: {
-    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#3D7B3F",
+  },
+  whiteButtonText: {
+    color: "#3D7B3F",
+  },
+  buttonKonfirmasi: {
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  buttonDaftarPesanan: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+});
+
+const stylesTicket = StyleSheet.create({
+  footer: {
+    position: "fixed",
+    bottom: 0,
+    paddingVertical: 10,
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  button: {
+    backgroundColor: "#3D7B3F",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  whiteButton: {
     borderWidth: 1,
     borderColor: "#3D7B3F",
   },
