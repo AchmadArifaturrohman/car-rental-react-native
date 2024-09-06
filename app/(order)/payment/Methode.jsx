@@ -16,11 +16,15 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 
 import { useSelector, useDispatch } from "react-redux";
 import { selectOrder, setStateByName } from "@/redux/reducers/order/orderSlice";
+import ModalPopup from "@/components/Modal";
+import { useColorScheme } from "react-native";
 
 export default function Methode({ data }) {
+  const colorScheme = useColorScheme();
   // const [selectedBank, setSelectedBank] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
   const { selectedBank, promo } = useSelector(selectOrder);
+  const [ModalVisible, setModalVisible] = useState(false);
   const dispatch = useDispatch();
   const promoCodeText = (text) => {
     setPromoCode(text);
@@ -63,6 +67,50 @@ export default function Methode({ data }) {
       accountName: "John Doe",
     },
   ];
+
+  const listPromo = [
+    {
+      name: "PROMO10",
+      discount: 10,
+    },
+    {
+      name: "PROMO20",
+      discount: 20,
+    },
+    {
+      name: "PROMO30",
+      discount: 30,
+    },
+    {
+      name: "PROMO40",
+      discount: 40,
+    },
+    {
+      name: "PROMO50",
+      discount: 50,
+    },
+  ];
+
+  const promoCodeDiscount = () => {
+    dispatch(
+      setStateByName({
+        name: "promo",
+        value:
+          listPromo.find((promoName) => promoName.name === promoCode)
+            ?.discount || null,
+      })
+    );
+    setModalVisible(true);
+  };
+
+  useEffect(() => {
+    if (ModalVisible) {
+      setTimeout(() => {
+        setModalVisible(false);
+      }, 2000);
+    }
+  }, [ModalVisible]);
+
   useEffect(() => {
     //setNewData(data);
     console.log("selectedBank", selectedBank);
@@ -136,20 +184,32 @@ export default function Methode({ data }) {
                 styles.promoCodeButton,
                 { backgroundColor: promoCode ? "#3D7B3F" : "#C9E7CA" },
               ]}
+              onPress={promoCodeDiscount}
             >
-              <ThemedText
-                style={styles.promoCodeButtonText}
-                type="label"
-                onPress={() =>
-                  dispatch(setStateByName({ name: "promo", value: promoCode }))
-                }
-              >
+              <ThemedText style={styles.promoCodeButtonText} type="label">
                 Terapkan
               </ThemedText>
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>
       </View>
+      <ModalPopup visible={ModalVisible}>
+        <ThemedView style={styles.modalBackground}>
+          <Ionicons
+            size={20}
+            name={promo ? "checkmark-circle" : "close-circle"}
+            color={colorScheme === "dark" ? "white" : "black"}
+            style={{ marginBottom: 10 }}
+          />
+          <ThemedText>
+            {promo
+              ? `Promo ${promo}% Berhasil Diterapkan!`
+              : promoCode
+              ? `Promo ${promoCode} tidak ditemukan`
+              : "Tolong masukkan kode promo"}
+          </ThemedText>
+        </ThemedView>
+      </ModalPopup>
     </ThemedView>
   );
 }
@@ -258,5 +318,17 @@ const styles = StyleSheet.create({
   },
   buttonBayar: {
     marginTop: 10,
+  },
+  modalBackground: {
+    width: "90%",
+    elevation: 20,
+    padding: 25,
+    borderRadius: 4,
+    margin: 10,
+    alignItems: "center",
+    borderWidth: 0.2,
+    shadowRadius: 10,
+    shadowOpacity: 0.35,
+    shadowOffset: { width: 3, height: 5 },
   },
 });

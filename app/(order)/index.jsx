@@ -9,6 +9,7 @@ import Confirmation from "@/app/(order)/payment/Confirmation";
 import Ticket from "@/app/(order)/payment/Ticket";
 import FormatCurrency from "@/components/FormatCurrency";
 import { useColorScheme } from "react-native";
+import moment from "moment";
 
 import {
   selectCarDetails,
@@ -23,8 +24,6 @@ import {
   setStateByName,
 } from "@/redux/reducers/order/orderSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { router } from "expo-router";
-
 import { selectAuthLogin } from "@/redux/reducers/auth/authSlice";
 
 const FooterMethode = ({ price, selectedBank, onPress }) => (
@@ -99,24 +98,23 @@ export default function Order() {
   const colorScheme = useColorScheme();
   const { data } = useSelector(selectCarDetails);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
-  const { currentStep, selectedBank, dataOrder } = useSelector(selectOrder);
+  const { currentStep, selectedBank, dataOrder, status, errorMessage } =
+    useSelector(selectOrder);
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
 
-  const token = useSelector(selectAuthLogin).user.access_token;
+  const user = useSelector(selectAuthLogin);
 
   const formData = {
     carId: data.id,
-    startRentAt: data.start_rent_at,
-    finishRentAt: data.finish_rent_at,
+    startRentAt: moment().format("YYYY-MM-DD"),
+    finishRentAt: moment().add(1, "days").format("YYYY-MM-DD"),
   };
 
   const handleBayar = async () => {
-    console.log("handleBayar");
-    dispatch(setStateByName({ name: "currentStep", value: 1 }));
     dispatch(setCarId(data.id));
-    dispatch(postOrders({ token, formData }));
+    dispatch(postOrders({ token: user.user.access_token, formData }));
+    dispatch(setStateByName({ name: "currentStep", value: 1 }));
   };
 
   const handleKonfirmasiBayar = async () => {
@@ -132,22 +130,25 @@ export default function Order() {
   };
 
   useEffect(() => {
-    setLoading(true);
-  }, []);
+    if (status === "success") {
+      dispatch(setStateByName({ name: "currentStep", value: 1 }));
+    } else if (status === "error") {
+      console.log(errorMessage);
+    }
+  }, [status]);
 
   return (
     <ThemedView style={styles.container}>
       <ProgressSteps activeStep={currentStep}>
         <ProgressStep label="Pilih Metode" removeBtnRow={true}>
           <ThemedView style={styles.pilihMetode}>
-            <Methode data={data} loading={loading} />
+            <Methode data={data} />
           </ThemedView>
         </ProgressStep>
         <ProgressStep label="Bayar" removeBtnRow={true}>
           <ThemedView style={styles.bayar}>
             <Payment
               data={data}
-              loading={loading}
               setConfirmationModalVisible={confirmationModalVisible}
             />
           </ThemedView>

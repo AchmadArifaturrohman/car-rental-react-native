@@ -1,8 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const postOrder = createAsyncThunk("order/postOrder", async ({token, formData}, {rejectWithValue}) => {
-        console.log("formData", formData);
-        console.log("token", token)
      try {
         
         const response = await fetch(
@@ -22,7 +20,6 @@ export const postOrder = createAsyncThunk("order/postOrder", async ({token, form
       );
       const body = await response?.json();
       if(!response.ok) throw new Error(body.message);
-      console.log("body", body)
       return body;
     } catch (error) {
         return rejectWithValue(error.message);

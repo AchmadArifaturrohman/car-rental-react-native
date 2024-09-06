@@ -46,7 +46,8 @@ export default function Payment({
   const colorScheme = useColorScheme();
   const [newLoading, setNewLoading] = useState(true);
   const [newData, setNewData] = useState(null);
-  const { selectedBank, promo, dataOrder } = useSelector(selectOrder);
+  const { selectedBank, promo, dataOrder, currentStep } =
+    useSelector(selectOrder);
   const dispatch = useDispatch();
   const [image, setImage] = useState(null);
 
@@ -89,7 +90,9 @@ export default function Payment({
             carName={data.name}
             passenger={5}
             baggage={4}
-            price={data.price}
+            price={data?.price - (data?.price * promo) / 100}
+            promo={promo}
+            currentStep={currentStep}
           />
         ) : (
           <ThemedView>
@@ -132,15 +135,26 @@ export default function Payment({
           </ThemedView>
         </ThemedView>
         <ThemedView style={styles.inputContainer}>
-          <ThemedText style={styles.inputLabel}>Total Bayar</ThemedText>
+          <ThemedText style={styles.inputLabel}>
+            Total Bayar{" "}
+            {promo ? (
+              <ThemedText type="label" style={{ color: "#5CB85F" }}>
+                ( Dengan Promo {promo}%)
+              </ThemedText>
+            ) : null}
+          </ThemedText>
           <ThemedView style={styles.inputWrapper}>
             <ThemedText style={styles.inputText}>
-              <FormatCurrency amount={data?.price} />
+              <FormatCurrency
+                amount={data?.price - (data?.price * promo) / 100}
+              />
             </ThemedText>
             <TouchableOpacity
               style={styles.copyButton}
               onPress={() => {
-                Clipboard.setStringAsync(data?.price.toString());
+                Clipboard.setStringAsync(
+                  (data?.price - (data?.price * promo) / 100).toString()
+                );
               }}
             >
               <Ionicons

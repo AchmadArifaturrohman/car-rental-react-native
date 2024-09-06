@@ -14,6 +14,8 @@ export default function CarList({
   price,
   onPress,
   style,
+  promo,
+  currentStep,
 }) {
   return (
     <Pressable onPress={onPress}>
@@ -34,9 +36,25 @@ export default function CarList({
                 <ThemedText style={styles.capacityText}>{baggage}</ThemedText>
               </Column>
             </Row>
-            <ThemedText style={styles.price}>
-              <FormatCurrency amount={price} />
-            </ThemedText>
+            {currentStep === 1 && promo ? (
+              <>
+                <ThemedText
+                  style={[
+                    styles.price,
+                    { textDecorationLine: "line-through", color: "#8A8A8A" },
+                  ]}
+                >
+                  <FormatCurrency amount={price} />
+                </ThemedText>
+                <ThemedText style={styles.price}>
+                  <FormatCurrency amount={price - (price * promo) / 100} />
+                </ThemedText>
+              </>
+            ) : (
+              <ThemedText style={styles.price}>
+                <FormatCurrency amount={price} />
+              </ThemedText>
+            )}
           </Column>
         </Row>
       </ThemedView>

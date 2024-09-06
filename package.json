@@ -35,6 +35,7 @@
     "expo-web-browser": "~13.0.3",
     "formik": "^2.4.6",
     "forming": "^0.0.22",
+    "moments": "^0.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.5",

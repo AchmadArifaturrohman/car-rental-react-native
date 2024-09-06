@@ -11,6 +11,9 @@ const initialState = {
   promo: null,
   verificationCountdown: null,
   errorMessage: null,
+  isError: false,
+  isModalVisible: false,
+  status: "pending"
 };
 
 const orderSlice = createSlice({
@@ -35,12 +38,14 @@ const orderSlice = createSlice({
     builder.addCase(postOrder.fulfilled, (state, action) => {
       state.isLoading = false;
       state.dataOrder = action.payload;
+      state.status = "success";
       // state.isModalVisible = true;
     });
     builder.addCase(postOrder.rejected, (state, action) => {
       state.isLoading = false
-      // state.isError = true;
+      state.isError = true;
       state.errorMessage = action.payload
+      state.status = "error";
       // state.isModalVisible = true;
     });
 
