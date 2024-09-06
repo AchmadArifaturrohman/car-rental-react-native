@@ -22,7 +22,7 @@ import {
 import * as Yup from "yup";
 import { Formik } from "formik";
 
-const SignupSchema = Yup.object().shape({
+const SignInSchema = Yup.object().shape({
   password: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email").required("Required"),
 });
@@ -81,7 +81,7 @@ export default function Login() {
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={(values) => handleSubmit(values)}
-        validationSchema={SignupSchema}
+        validationSchema={SignInSchema}
       >
         {({
           handleChange,

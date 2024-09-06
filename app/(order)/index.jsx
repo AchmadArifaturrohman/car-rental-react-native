@@ -120,8 +120,8 @@ export default function Order() {
   };
 
   const handleKonfirmasiBayar = async () => {
-    () => dispatch(setStateByName({ name: "currentStep", value: 2 }));
-    //() => setConfirmationModalVisible(true)
+    setConfirmationModalVisible(true);
+    //dispatch(setStateByName({ name: "currentStep", value: 2 }));
   };
 
   const progressStepStyle = {

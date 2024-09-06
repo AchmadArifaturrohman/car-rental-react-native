@@ -103,9 +103,7 @@ export default function Methode({ data }) {
             key={index}
             style={styles.bankOption}
             onPress={() =>
-              dispatch(
-                setStateByName({ name: "selectedBank", value: bank.name })
-              )
+              dispatch(setStateByName({ name: "selectedBank", value: bank }))
             }
           >
             <ThemedView style={styles.bankShape}>
@@ -114,7 +112,7 @@ export default function Methode({ data }) {
             <ThemedText style={styles.transferName}>
               {bank.transferName}
             </ThemedText>
-            {selectedBank === bank.name && (
+            {selectedBank?.name === bank.name && (
               <ThemedView style={styles.checkmark}>
                 <Ionicons name="checkmark" size={16} color="white" />
               </ThemedView>

@@ -46,19 +46,17 @@ export default function Payment({
   const colorScheme = useColorScheme();
   const [newLoading, setNewLoading] = useState(true);
   const [newData, setNewData] = useState(null);
-  // const [selectedBank, setSelectedBank] = useState(null);
-  const bankOptions = [{ name: "BCA", transferName: "BCA Transfer" }];
   const { selectedBank, promo, dataOrder } = useSelector(selectOrder);
   const dispatch = useDispatch();
   const [image, setImage] = useState(null);
+
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
   };
 
   useEffect(() => {
-    setNewData(data);
     console.log("dataOrder", dataOrder);
-  }, []);
+  }, [dataOrder]);
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
@@ -105,20 +103,14 @@ export default function Payment({
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.pilihBank}>
-        {bankOptions.map((bank, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.bankOption}
-            onPress={() => setSelectedBank(bank.name)}
-          >
-            <ThemedView style={styles.bankShape}>
-              <ThemedText style={styles.bankName}>{bank.name}</ThemedText>
-            </ThemedView>
-            <ThemedText style={styles.transferName}>
-              {bank.transferName}
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
+        <TouchableOpacity style={styles.bankOption} disabled={true}>
+          <ThemedView style={styles.bankShape}>
+            <ThemedText style={styles.bankName}>{selectedBank.name}</ThemedText>
+          </ThemedView>
+          <ThemedText style={styles.transferName}>
+            {selectedBank.transferName}
+          </ThemedText>
+        </TouchableOpacity>
       </ThemedView>
       <ThemedView style={styles.formRekening}>
         <ThemedView style={styles.inputContainer}>
