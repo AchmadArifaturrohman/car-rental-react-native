@@ -41,7 +41,7 @@ export default function Ticket({
   const [newData, setNewData] = useState(null);
   // const [selectedBank, setSelectedBank] = useState(null);
   const bankOptions = [{ name: "BCA", transferName: "BCA Transfer" }];
-  const { selectedBank, promo } = useSelector(selectOrder);
+  const { dataOrder } = useSelector(selectOrder);
   const dispatch = useDispatch();
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
@@ -62,7 +62,10 @@ export default function Ticket({
     }
   };
   useEffect(() => {
+    setImage(dataOrder.slip);
+    console.log("dataOrder", dataOrder.slip);
     setNewData(data);
+    setNewLoading(false);
   }, []);
   return (
     <ThemedView style={styles.container}>
@@ -70,7 +73,7 @@ export default function Ticket({
         <ThemedText style={styles.textHeader}>Invoice</ThemedText>
         <ThemedView style={styles.inputWrapper}>
           <ThemedText style={styles.inputText} type="label">
-            INV/XX/XX-XXXX/
+            INV/{dataOrder.UserId}/{dataOrder.CarId}-{dataOrder.id}/
           </ThemedText>
           <TouchableOpacity
             style={styles.copyButton}
@@ -88,16 +91,22 @@ export default function Ticket({
       </ThemedView>
       <ThemedView>
         <ThemedText style={styles.textHeader}>E-Ticket</ThemedText>
-        <TouchableOpacity
-          style={image ? styles.imageUploaded : styles.imageUpload}
-          onPress={pickImage}
+        <ThemedView
+          style={dataOrder.slip ? styles.imageUploaded : styles.imageUpload}
         >
-          {image ? (
-            <Image source={{ uri: image }} style={styles.image} />
+          {dataOrder.slip ? (
+            <Image
+              source={{ uri: dataOrder.slip }}
+              style={styles.image}
+              resizeMode="contain"
+            />
           ) : (
             <Ionicons color={"#3C3C3C"} name="image-outline" size={40} />
           )}
-        </TouchableOpacity>
+        </ThemedView>
+        <ThemedText style={styles.textHeader}>
+          Tunjukkan tiket ini ke petugas JBO di pos penjemputan Anda.
+        </ThemedText>
       </ThemedView>
     </ThemedView>
   );
@@ -150,10 +159,15 @@ const styles = StyleSheet.create({
     borderColor: "grey",
     borderStyle: "dashed",
     borderRadius: 5,
-    padding: 30,
+    height: 200,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
     marginTop: 5,
+    overflow: "hidden",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
 });

@@ -1,27 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<Text
+<TextInput
+  placeholderTextColor="#687076"
   style={
     [
       {
-        "color": "#11181C",
-      },
-      {
+        "borderColor": "#ccc",
+        "borderRadius": 5,
+        "borderWidth": 1,
         "fontFamily": "PoppinsRegular",
         "fontSize": 16,
         "lineHeight": 24,
-        "textAlignVertical": "bottom",
+        "padding": 10,
       },
       undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      {
+        "color": "#11181C",
+      },
     ]
   }
 >
   Snapshot test!
-</Text>
+</TextInput>
 `;

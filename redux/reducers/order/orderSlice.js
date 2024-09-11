@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { postOrder, postOrderSlip } from "./orderApi";
+import { postOrder, putOrderSlip } from "./orderApi";
 
 const initialState = {
   isLoading: false,
@@ -28,7 +28,8 @@ const orderSlice = createSlice({
       state[name] = value;
     },
     resetState: (state) => {
-      state = initialState
+      state.dataOrder = {}
+      state.currentStep = 0
     }
   },
   extraReducers: (builder) => {
@@ -49,25 +50,27 @@ const orderSlice = createSlice({
       // state.isModalVisible = true;
     });
 
-    builder.addCase(postOrderSlip.pending, (state, action) => {
+    builder.addCase(putOrderSlip.pending, (state, action) => {
       state.isLoading = true;
     });
-    builder.addCase(postOrderSlip.fulfilled, (state, action) => {
+    builder.addCase(putOrderSlip.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.data = action.payload;
+      state.dataOrder = action.payload;
+      state.status = "upload-success";
       // state.isModalVisible = true;
     });
-    builder.addCase(postOrderSlip.rejected, (state, action) => {
+    builder.addCase(putOrderSlip.rejected, (state, action) => {
       state.isLoading = false
-      // state.isError = true;
+      state.isError = true;
       state.errorMessage = action.payload
+      state.status = "upload-error";
       // state.isModalVisible = true;
     });
   },
 });
 
 export const postOrders = postOrder;
-export const postOrderSlips = postOrderSlip;
+export const putOrderSlips = putOrderSlip;
 export const { setCarId, setStateByName, resetState } = orderSlice.actions;
 export const selectOrder = (state) => state.order; //selector
 export default orderSlice.reducer;

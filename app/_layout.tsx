@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import { getUser } from "@/components/GetUser";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
+import crashlytics from '@react-native-firebase/crashlytics';
 
 
 SplashScreen.preventAutoHideAsync();  // Prevent auto-hiding of splash screen
@@ -36,6 +37,7 @@ export default function RootLayout() {
     if (loaded) {
       // If user is logged in, navigate to main tabs
       if (user) {
+        crashlytics().log('User logged in.');
         router.navigate("/(tabs)");
       }
       // Hide splash screen after 500ms

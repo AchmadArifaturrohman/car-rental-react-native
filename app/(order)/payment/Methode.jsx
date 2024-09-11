@@ -107,7 +107,7 @@ export default function Methode({ data }) {
     if (ModalVisible) {
       setTimeout(() => {
         setModalVisible(false);
-      }, 2000);
+      }, 1500);
     }
   }, [ModalVisible]);
 
