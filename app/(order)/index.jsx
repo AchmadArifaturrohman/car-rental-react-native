@@ -17,7 +17,7 @@ import {
 } from "@/redux/reducers/car/carDetailsSlice";
 import {
   postOrders,
-  postOrderSlips,
+  putOrderSlips,
   selectOrder,
   setCarId,
   resetState,
@@ -114,7 +114,6 @@ export default function Order() {
   const handleBayar = async () => {
     dispatch(setCarId(data.id));
     dispatch(postOrders({ token: user.user.access_token, formData }));
-    dispatch(setStateByName({ name: "currentStep", value: 1 }));
   };
 
   const handleKonfirmasiBayar = async () => {
@@ -133,7 +132,7 @@ export default function Order() {
     if (status === "success") {
       dispatch(setStateByName({ name: "currentStep", value: 1 }));
     } else if (status === "error") {
-      console.log(errorMessage);
+      console.log("errorMessage", errorMessage);
     }
   }, [status]);
 

@@ -1,11 +1,18 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 
-export function Container({ children, style }) {
+export function Container({ children, style, ...props }) {
   return <View style={{ ...styles.container, ...style }}>{children}</View>;
 }
 
-export function Row({ children, alignItems, justifyContent, gap, style }) {
+export function Row({
+  children,
+  alignItems,
+  justifyContent,
+  gap,
+  style,
+  ...props
+}) {
   return (
     <View
       style={{
@@ -21,7 +28,7 @@ export function Row({ children, alignItems, justifyContent, gap, style }) {
   );
 }
 
-export function Column({ children, style }) {
+export function Column({ children, style, ...props }) {
   return <View style={{ ...styles.column, ...style }}>{children}</View>;
 }
 

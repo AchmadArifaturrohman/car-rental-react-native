@@ -14,6 +14,7 @@ import {
   selectCarDetails,
 } from "@/redux/reducers/car/carDetailsSlice"; // Import getCarDetails and selectCarDetails from carDetailsSlice // getCarDetails untuk mengambil data dari API, selectCarDetails untuk mengakses state dari store
 import FormatCurrency from "@/components/FormatCurrency";
+import { resetState } from "@/redux/reducers/order/orderSlice";
 
 export default function details() {
   const { id } = useLocalSearchParams();
@@ -117,7 +118,10 @@ export default function details() {
         <Button
           title="Lanjutkan Pembayaran"
           color="#3D7B3F"
-          onPress={() => router.navigate("/(order)")}
+          onPress={() => {
+            dispatch(resetState());
+            router.navigate("/(order)");
+          }}
         />
       </ThemedView>
     </ThemedView>
