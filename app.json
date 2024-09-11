@@ -19,14 +19,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
-    },
-    "permissions": [
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.achmada.carrentalexpo",
+      "permissions": [
       "android.permission.ACCESS_COARSE_LOCATION",
       "android.permission.ACCESS_FINE_LOCATION"
     ],
     "package": "com.achmada.carrentalexpo",
-    "googleServicesFile": "./google-services.json",
+    "googleServicesFile": "./google-services.json"
+    },
+    
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -37,6 +43,7 @@
       "expo-secure-store",
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
+      "@react-native-google-signin/google-signin",
       [
         "expo-location",
         {
