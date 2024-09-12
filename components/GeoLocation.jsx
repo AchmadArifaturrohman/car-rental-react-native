@@ -99,5 +99,6 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: 4,
     fontSize: 14,
+    color: "white",
   },
 });

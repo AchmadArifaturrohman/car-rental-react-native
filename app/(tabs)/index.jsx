@@ -38,7 +38,7 @@ export default function HomeScreen() {
       headerImage={
         <View style={styles.container}>
           <View>
-            <Text style={styles.titleText}>Hi, Nama</Text>
+            <Text style={[styles.titleText, { color: "white" }]}>Hi, Nama</Text>
             <GeoLocation style={styles.titleText} />
           </View>
           <View>
@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: "PoppinsBold",
-    color: "#ffffff",
   },
   imageProfile: {
     width: 35,
