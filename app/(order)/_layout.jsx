@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import { View } from "react-native";
-import Constants from "expo-constants";
 
 export default function () {
   return (

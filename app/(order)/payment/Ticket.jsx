@@ -5,7 +5,6 @@ import {
   Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import CarList from "@/components/CarList";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,33 +12,10 @@ import * as Clipboard from "expo-clipboard";
 import * as ImagePicker from "expo-image-picker";
 
 import { useSelector, useDispatch } from "react-redux";
-import { selectOrder, setStateByName } from "@/redux/reducers/order/orderSlice";
+import { selectOrder } from "@/redux/reducers/order/orderSlice";
 
-function getDate24() {
-  const date24 = new Date();
-  date24.setHours(date24.getHours() + 24);
-  return date24.toLocaleString("id-ID", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  });
-}
-
-export default function Ticket({
-  data,
-  loading,
-  setActiveStep,
-  setConfirmationModalVisible,
-}) {
+export default function Ticket({ data }) {
   const colorScheme = useColorScheme();
-  const [newLoading, setNewLoading] = useState(true);
-  const [newData, setNewData] = useState(null);
-  // const [selectedBank, setSelectedBank] = useState(null);
   const bankOptions = [{ name: "BCA", transferName: "BCA Transfer" }];
   const { dataOrder } = useSelector(selectOrder);
   const dispatch = useDispatch();
@@ -63,9 +39,6 @@ export default function Ticket({
   };
   useEffect(() => {
     setImage(dataOrder.slip);
-    console.log("dataOrder", dataOrder.slip);
-    setNewData(data);
-    setNewLoading(false);
   }, []);
   return (
     <ThemedView style={styles.container}>

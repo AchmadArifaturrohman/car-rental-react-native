@@ -1,26 +1,15 @@
-import {
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  View,
-  Button,
-  ScrollView,
-  useColorScheme,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { StyleSheet, TouchableOpacity, useColorScheme } from "react-native";
+import React, { useEffect } from "react";
 import CarList from "@/components/CarList";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import FormatCurrency from "@/components/FormatCurrency";
-import { ThemedTextInput } from "@/components/ThemedTextInput";
 import CountDown from "react-native-countdown-component-maintained";
 import * as Clipboard from "expo-clipboard";
 
-import Confirmation from "./Confirmation";
-
-import { useSelector, useDispatch } from "react-redux";
-import { selectOrder, setStateByName } from "@/redux/reducers/order/orderSlice";
+import { useSelector } from "react-redux";
+import { selectOrder } from "@/redux/reducers/order/orderSlice";
 
 function getDate24() {
   const date24 = new Date();
@@ -37,26 +26,20 @@ function getDate24() {
   });
 }
 
-export default function Payment({
-  data,
-  loading,
-  setActiveStep,
-  setConfirmationModalVisible,
-}) {
+export default function Payment({ data }) {
   const colorScheme = useColorScheme();
-  const [newLoading, setNewLoading] = useState(true);
-  const [newData, setNewData] = useState(null);
   const { selectedBank, promo, dataOrder, currentStep } =
     useSelector(selectOrder);
-  const dispatch = useDispatch();
-  const [image, setImage] = useState(null);
-
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
   };
 
   useEffect(() => {
     console.log("dataOrder", dataOrder);
+    console.log("promo", promo);
+    console.log("price", data?.price);
+    console.log("price", data?.price - (data?.price * promo) / 100);
+    console.log("price", data?.price * promo);
   }, [dataOrder]);
   return (
     <ThemedView style={styles.container}>
@@ -90,7 +73,7 @@ export default function Payment({
             carName={data.name}
             passenger={5}
             baggage={4}
-            price={data?.price - (data?.price * promo) / 100}
+            price={data?.price}
             promo={promo}
             currentStep={currentStep}
           />

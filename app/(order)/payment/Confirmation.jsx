@@ -18,8 +18,7 @@ import {
   setStateByName,
   selectOrder,
 } from "@/redux/reducers/order/orderSlice";
-import { selectAuthLogin, newAuthLogin } from "@/redux/reducers/auth/authSlice";
-import { selectCarDetails } from "@/redux/reducers/car/carDetailsSlice";
+import { selectAuthLogin } from "@/redux/reducers/auth/authSlice";
 import ModalPopup from "@/components/Modal";
 
 export default function Confirmation({ visible, onClose }) {
@@ -56,7 +55,6 @@ export default function Confirmation({ visible, onClose }) {
       console.log("formData confirmation", formData);
     } else {
       setModalVisible(true);
-      //alert("Silahkan pilih gambar terlebih dahulu");
     }
   };
   useEffect(() => {

@@ -1,17 +1,9 @@
-import {
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  View,
-  Button,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import CarList from "@/components/CarList";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
-import FormatCurrency from "@/components/FormatCurrency";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -21,7 +13,6 @@ import { useColorScheme } from "react-native";
 
 export default function Methode({ data }) {
   const colorScheme = useColorScheme();
-  // const [selectedBank, setSelectedBank] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
   const { selectedBank, promo } = useSelector(selectOrder);
   const [ModalVisible, setModalVisible] = useState(false);
@@ -112,7 +103,6 @@ export default function Methode({ data }) {
   }, [ModalVisible]);
 
   useEffect(() => {
-    //setNewData(data);
     console.log("selectedBank", selectedBank);
     console.log("promo", promo);
     console.log("data", data);

@@ -12,7 +12,6 @@ import { ThemedTextInput as TextInput } from "@/components/ThemedTextInput";
 import { Colors } from "@/constants/Colors";
 import ModalPopup from "@/components/Modal";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { saveUser } from "@/components/GetUser";
 import { useDispatch, useSelector } from "react-redux";
 import {
   postAuthLogin,
@@ -50,7 +49,6 @@ export default function Login() {
 
   function onAuthStateChanged(user) {
     console.log("user :", user);
-    //if (initializing) setInitializing(false);
   }
 
   useEffect(() => {
@@ -60,14 +58,8 @@ export default function Login() {
 
   const colorScheme = useColorScheme();
 
-  const {
-    user,
-    isLoading,
-    isError,
-    errorMessage,
-    isLoginSuccess,
-    isModalVisible,
-  } = useSelector(selectAuthLogin);
+  const { isError, errorMessage, isModalVisible } =
+    useSelector(selectAuthLogin);
 
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
@@ -81,7 +73,6 @@ export default function Login() {
       setTimeout(() => {
         dispatch(closeModal());
         if (!isError) {
-          //saveUser(user);
           router.replace("../(tabs)");
         }
       }, 1000);
@@ -188,7 +179,6 @@ export default function Login() {
           size={GoogleSigninButton.Size.Wide}
           color={GoogleSigninButton.Color.Dark}
           onPress={onGoogleButtonPress}
-          //disabled={isInProgress}
         />
       </View>
       <ModalPopup visible={isModalVisible}>

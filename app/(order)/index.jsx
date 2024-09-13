@@ -11,16 +11,11 @@ import FormatCurrency from "@/components/FormatCurrency";
 import { useColorScheme } from "react-native";
 import moment from "moment";
 
-import {
-  selectCarDetails,
-  getCarDetails,
-} from "@/redux/reducers/car/carDetailsSlice";
+import { selectCarDetails } from "@/redux/reducers/car/carDetailsSlice";
 import {
   postOrders,
-  putOrderSlips,
   selectOrder,
   setCarId,
-  resetState,
   setStateByName,
 } from "@/redux/reducers/order/orderSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -98,7 +93,7 @@ export default function Order() {
   const colorScheme = useColorScheme();
   const { data } = useSelector(selectCarDetails);
   const dispatch = useDispatch();
-  const { currentStep, selectedBank, dataOrder, status, errorMessage } =
+  const { currentStep, selectedBank, status, errorMessage } =
     useSelector(selectOrder);
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
@@ -118,7 +113,6 @@ export default function Order() {
 
   const handleKonfirmasiBayar = async () => {
     setConfirmationModalVisible(true);
-    //dispatch(setStateByName({ name: "currentStep", value: 2 }));
   };
 
   const progressStepStyle = {
